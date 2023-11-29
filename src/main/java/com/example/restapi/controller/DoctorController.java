@@ -4,7 +4,6 @@ package com.example.restapi.controller;
 import com.example.restapi.command.DoctorCommand;
 import com.example.restapi.domain.Doctor;
 import com.example.restapi.dto.DoctorDTO;
-import com.example.restapi.repository.DoctorRepository;
 import com.example.restapi.service.DoctorService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -50,5 +49,10 @@ public class DoctorController {
                 .map(doctor -> modelMapper
                         .map(doctor, DoctorDTO.class))
                 .toList(), HttpStatus.OK);
+    }
+    @DeleteMapping("/{id}")
+    private ResponseEntity<DoctorDTO> delete(@PathVariable Long id){
+        doctorService.deleteById(id);
+        return new ResponseEntity<>(null, HttpStatus.OK); //HttpStatus.NO_CONTENT?
     }
 }

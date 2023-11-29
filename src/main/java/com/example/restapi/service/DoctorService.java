@@ -26,4 +26,9 @@ public class DoctorService {
     public List<Doctor> listAll() {
         return doctorRepository.findAll();
     }
+
+    public void deleteById(Long id) {
+        doctorRepository.delete(doctorRepository.findById(id)
+                .orElseThrow(() -> new DoctorNotFoundException("Doctor cannot be found!")));
+    }
 }
