@@ -28,5 +28,5 @@ public class Patient {
 
 //    cascade oraz rodzaje fetch, mozesz rowniez zerknac na orphanRemoval
     @OneToMany
-    private List<Appointment> appointmentList = new ArrayList<>();
+    private List<Appointment> appointments = new ArrayList<>();
 }

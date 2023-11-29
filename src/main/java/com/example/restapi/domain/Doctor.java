@@ -4,6 +4,7 @@ import com.example.restapi.model.DoctorSpecializationType;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -21,5 +22,5 @@ public class Doctor {
     private DoctorSpecializationType specialization;
     private int age;
     @OneToMany
-    private List<Appointment> appointments;
+    private List<Appointment> appointments = new ArrayList<>();
 }
