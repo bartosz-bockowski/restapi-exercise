@@ -1,11 +1,7 @@
 package com.example.restapi.dto;
 
-import com.example.restapi.domain.Appointment;
 import com.example.restapi.model.DoctorSpecializationType;
 import lombok.Data;
-
-import javax.persistence.OneToMany;
-import java.util.List;
 
 @Data
 public class DoctorDTO {
