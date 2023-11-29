@@ -26,7 +26,7 @@ public class Patient {
 
     private String pesel;
 
-//    cascade oraz rodzaje fetch, mozesz rowniez zerknac na orphanRemoval
+    //    cascade oraz rodzaje fetch, mozesz rowniez zerknac na orphanRemoval
     @OneToMany
     private List<Appointment> appointments = new ArrayList<>();
 }
