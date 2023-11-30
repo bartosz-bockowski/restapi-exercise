@@ -1,7 +1,10 @@
 package com.example.restapi.security.user;
 
+import com.example.restapi.domain.User;
 import com.example.restapi.security.role.RoleRepository;
+import liquibase.pro.packaged.B;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -11,7 +14,6 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
     private final RoleRepository roleRepository;
-    private final BCryptPasswordEncoder passwordEncoder;
 
     @Override
     public User findByUserName(String username) {
@@ -19,7 +21,7 @@ public class UserServiceImpl implements UserService {
     }
     @Override
     public User saveUser(User user) {
-        user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
         return userRepository.save(user);
     }
 }

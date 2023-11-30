@@ -1,5 +1,6 @@
 package com.example.restapi.security.user;
 
+import com.example.restapi.domain.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
