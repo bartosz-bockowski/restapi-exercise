@@ -17,4 +17,8 @@ public class PatientCommand {
 
     private String pesel;
 
+    private String username;
+
+    private String password;
+
 }

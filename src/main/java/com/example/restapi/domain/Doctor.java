@@ -8,19 +8,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Getter  //czemu nie uzywamy data w encji
+@Getter
 @Setter
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class Doctor {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Doctor extends User {
+
     private String name;
+
     private String surname;
+
     private DoctorSpecializationType specialization;
+
     private int age;
+
     @OneToMany
     private List<Appointment> appointments = new ArrayList<>();
 }

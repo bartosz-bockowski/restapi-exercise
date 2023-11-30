@@ -9,8 +9,17 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class DoctorCommand {
+
     private String name;
+
     private String surname;
+
     private DoctorSpecializationType specialization;
+
     private int age;
+
+    private String username;
+
+    private String password;
+
 }

@@ -13,4 +13,6 @@ public class PatientDTO {
 
     private String pesel;
 
+    private String username;
+
 }

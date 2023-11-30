@@ -1,8 +1,7 @@
 package com.example.restapi.security;
 
 import com.example.restapi.security.user.SpringDataUserDetailsService;
-import com.example.restapi.security.user.UserRepository;
-import liquibase.pro.packaged.A;
+import com.example.restapi.security.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,7 +28,7 @@ import javax.servlet.Filter;
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthFilter;
-    private final UserRepository userRepository;
+    private final UserService userService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -51,15 +50,10 @@ public class SecurityConfig {
     }
 
     @Bean
-    public UserDetailsService userDetailsService() {
-        return username -> userRepository.findByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
-    }
-    @Bean
     public AuthenticationProvider authenticationProvider(){
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
-        authProvider.setUserDetailsService(userDetailsService());
-        authProvider.setPasswordEncoder(new BCryptPasswordEncoder());
+        authProvider.setUserDetailsService(userService::findByUserName);
+        authProvider.setPasswordEncoder(bCryptPasswordEncoder());
         return authProvider;
     }
     @Bean

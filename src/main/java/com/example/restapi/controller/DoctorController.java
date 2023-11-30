@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,17 +23,19 @@ public class DoctorController {
 
     private final ModelMapper modelMapper;
 
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
     //todo zobacz jaka jest roznica miedzy PutMapping a PatchMapping, flyway, liquibase, modelmapper, mapstruct
-//Do zrobienia bedzie  to samo co tutaj dla pacjenta
 //    do appointment stworzy @Post, stowrzmy rowniez metode aby Pacjent i doktor mogli wypisywac swoje wizyty (aktualnie za pomoca swojego ID
 //    a potem sesji. Do tego dodac walidacje @Notblack etc.
-//    mozliwosc zarejestrowania sie jako patient i doctor
-//    Poczytaj o @Inheritance
-//    @DiscriminatorColumn, discriminatorType
-//    dziedziczenie w springu
+//    mozliwosc zarejestrowania sie jako patient i doctor - zrobione
+//    Poczytaj o @Inheritance - zrobione
+//    @DiscriminatorColumn, discriminatorType - zrobione
+//    dziedziczenie w springu - zrobione
 //    https://www.youtube.com/watch?v=KxqlJblhzfI
     @PostMapping
     public ResponseEntity<DoctorDTO> save(@RequestBody DoctorCommand doctorCommand) {
+        doctorCommand.setPassword(bCryptPasswordEncoder.encode(doctorCommand.getPassword()));
         return new ResponseEntity<>(modelMapper
                 .map(doctorService.save(
                         modelMapper.map(doctorCommand, Doctor.class)), DoctorDTO.class), HttpStatus.CREATED);

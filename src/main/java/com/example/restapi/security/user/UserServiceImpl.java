@@ -2,7 +2,6 @@ package com.example.restapi.security.user;
 
 import com.example.restapi.domain.User;
 import com.example.restapi.security.role.RoleRepository;
-import liquibase.pro.packaged.B;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;

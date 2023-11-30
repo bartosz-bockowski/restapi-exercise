@@ -7,16 +7,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Getter  //czemu nie uzywamy data w encji
+@Getter
 @Setter
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class Patient {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+public class Patient extends User{
 
     private String name;
 
@@ -26,7 +22,7 @@ public class Patient {
 
     private String pesel;
 
-    //    cascade oraz rodzaje fetch, mozesz rowniez zerknac na orphanRemoval
+
     @OneToMany
     private List<Appointment> appointments = new ArrayList<>();
 }

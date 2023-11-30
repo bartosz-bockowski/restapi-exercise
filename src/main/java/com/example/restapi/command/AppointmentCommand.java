@@ -16,4 +16,5 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class AppointmentCommand {
     private LocalDate date;
+    private Long patient;
 }
