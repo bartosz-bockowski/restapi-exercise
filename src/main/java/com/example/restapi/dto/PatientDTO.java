@@ -1,18 +1,9 @@
 package com.example.restapi.dto;
 
-import lombok.Data;
+import com.example.restapi.model.PatientHealthStatus;
+import lombok.*;
 
 @Data
-public class PatientDTO {
-
-    private String name;
-
-    private String surname;
-
-    private int age;
-
-    private String pesel;
-
-    private String username;
-
+public class PatientDTO extends UserDTO{
+    private PatientHealthStatus health;
 }

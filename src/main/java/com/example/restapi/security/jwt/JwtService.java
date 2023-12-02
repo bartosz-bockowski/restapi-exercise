@@ -1,29 +1,41 @@
-package com.example.restapi.security;
+package com.example.restapi.security.jwt;
 
 import com.example.restapi.domain.User;
+import com.example.restapi.security.role.Role;
+import com.example.restapi.security.role.RoleRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 @Service
 @RequiredArgsConstructor
 public class JwtService {
 
-    private static final String SECRET_KEY = "692CCA07DB9D72FD3CF2672684F258DE3A566F60D077C5C228876F9B0F31282F";
+    private final RoleRepository roleRepository;
+
+    @Value("${secretKey}")
+    private String secretKey;
 
     public String extractUsername(String token){
         return extractClaim(token, Claims::getSubject);
+    }
+
+    public List extractRoles(String token){
+        return  ((ArrayList) extractAllClaims(token).get("roleNames")).stream()
+                .map(roleName -> roleRepository.findByName(roleName.toString()))
+                .filter(Objects::nonNull)
+                .toList();
     }
 
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver){
@@ -35,12 +47,8 @@ public class JwtService {
         return generateToken(new HashMap<>(), user);
     }
 
-    public String generateToken(
-            Map<String, Object> extraClaims,
-            User user
-    ) {
-        return Jwts
-                .builder()
+    public String generateToken(Map<String, Object> extraClaims, User user) {
+        return Jwts.builder()
                 .setClaims(extraClaims)
                 .setSubject(user.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
@@ -63,8 +71,7 @@ public class JwtService {
     }
 
     private Claims extractAllClaims(String token){
-        return Jwts
-                .parserBuilder()
+        return Jwts.parserBuilder()
                 .setSigningKey(getSignInKey())
                 .build()
                 .parseClaimsJws(token)
@@ -72,7 +79,7 @@ public class JwtService {
     }
 
     private Key getSignInKey(){
-        byte[] keyBytes = Decoders.BASE64.decode(SECRET_KEY);
+        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }

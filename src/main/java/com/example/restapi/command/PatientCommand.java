@@ -2,23 +2,12 @@ package com.example.restapi.command;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
+@EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
-public class PatientCommand {
-
-    private String name;
-
-    private String surname;
-
-    private int age;
-
-    private String pesel;
-
-    private String username;
-
-    private String password;
+public class PatientCommand extends UserCommand {
 
 }

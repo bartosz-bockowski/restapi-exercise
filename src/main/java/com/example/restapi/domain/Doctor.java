@@ -23,6 +23,7 @@ public class Doctor extends User {
 
     private int age;
 
-    @OneToMany
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.REMOVE)
     private List<Appointment> appointments = new ArrayList<>();
+
 }

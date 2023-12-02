@@ -1,4 +1,4 @@
-package com.example.restapi.command;
+package com.example.restapi.command.appointment;
 
 import com.example.restapi.domain.Patient;
 import lombok.AllArgsConstructor;
@@ -16,5 +16,5 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class AppointmentCommand {
     private LocalDate date;
-    private Long patient;
+    private Long doctorId;
 }

@@ -1,5 +1,6 @@
 package com.example.restapi.domain;
 
+import com.example.restapi.model.PatientHealthStatus;
 import lombok.*;
 
 import javax.persistence.*;
@@ -12,7 +13,11 @@ import java.util.List;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@DiscriminatorValue("Patient")
 public class Patient extends User{
+
+    @Enumerated(EnumType.STRING)
+    private PatientHealthStatus health;
 
     private String name;
 
@@ -22,7 +27,7 @@ public class Patient extends User{
 
     private String pesel;
 
-
-    @OneToMany
+    @OneToMany(mappedBy = "patient", cascade = CascadeType.REMOVE)
     private List<Appointment> appointments = new ArrayList<>();
+
 }

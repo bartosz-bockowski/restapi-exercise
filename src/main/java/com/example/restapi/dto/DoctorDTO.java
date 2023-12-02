@@ -4,16 +4,8 @@ import com.example.restapi.model.DoctorSpecializationType;
 import lombok.Data;
 
 @Data
-public class DoctorDTO {
-
-    private String name;
-
-    private String surname;
+public class DoctorDTO extends UserDTO {
 
     private DoctorSpecializationType specialization;
-
-    private int age;
-
-    private String username;
 
 }
