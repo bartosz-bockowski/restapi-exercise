@@ -18,15 +18,14 @@ import com.example.restapi.repository.DoctorRepository;
 import com.example.restapi.repository.PatientRepository;
 import com.example.restapi.security.user.SpringDataUserDetailsService;
 import com.example.restapi.security.user.UserService;
-import liquibase.pro.packaged.T;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -48,14 +47,12 @@ public class AppointmentService {
 
     private final SpringDataUserDetailsService userDetailsService;
 
-    public Appointment save(AppointmentCommand appointmentCommand){
+    public Appointment save(AppointmentCommand appointmentCommand) {
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
-        Appointment appointment = modelMapper.map(appointmentCommand,Appointment.class);
+        Appointment appointment = modelMapper.map(appointmentCommand, Appointment.class);
 
         Doctor doctor = doctorService.findById(appointmentCommand.getDoctorId());
         appointment.setDoctor(doctor);
-
-        appointment.setDate(appointmentCommand.getDate());
 
         appointment.setStatus(AppointmentStatus.AWAITING);
 
@@ -72,19 +69,19 @@ public class AppointmentService {
         return appointmentRepository.getAppointmentsByDoctorId(doctorId);
     }
 
-    public Class getDTOforLoggedUser(){
+    public Class getDTOforLoggedUser() {
         String userType = userService.getLoggedUser().getUserType();
         return switch (userType) {
             case "Patient" -> PatientAppointmentDTO.class;
-            case "Doctor" ->  DoctorAppointmentDTO.class;
+            case "Doctor" -> DoctorAppointmentDTO.class;
             default -> null;
         };
     }
 
-    public Appointment cancelById(Long appointmentId){
+    public Appointment cancelById(Long appointmentId) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new AppointmentNotFoundException("Appointment doesn't exist!"));
-        if(!List.of(appointment.getDoctor().getId(),appointment.getPatient().getId()).contains(userService.getLoggedUser().getId())){
+        if (!List.of(appointment.getDoctor().getId(), appointment.getPatient().getId()).contains(userService.getLoggedUser().getId())) {
             throw new AccessDeniedException("Access denied");
         }
         appointment.setStatus(AppointmentStatus.CANCELLED);
@@ -92,20 +89,20 @@ public class AppointmentService {
         return appointment;
     }
 
-    public Appointment completeById(Long appointmentId, int healthId){
+    public Appointment completeById(Long appointmentId, int healthId) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new AppointmentNotFoundException("Appointment doesn't exist!"));
-        if(!appointment.getDoctor().getId().equals(userService.getLoggedUser().getId())){
+        if (!Objects.equals(appointment.getDoctor().getId(), userService.getLoggedUser().getId())) {
             throw new AccessDeniedException("Access denied!");
         }
-        if(appointment.getDate().isAfter(LocalDate.now())){
+        if (appointment.getDate().isAfter(LocalDate.now())) {
             throw new AppointmentCompletionTooEarlyException("It's too early to complete this appointment!");
         }
         appointment.setStatus(AppointmentStatus.COMPLETED);
         Patient patient = appointment.getPatient();
-        for(PatientHealthStatus status : PatientHealthStatus.values()){
+        for (PatientHealthStatus status : PatientHealthStatus.values()) {
             //if id is wrong, then no change
-            if(status.getId() == healthId) {
+            if (status.getId() == healthId) {
                 patient.setHealth(status);
                 break;
             }
@@ -115,7 +112,7 @@ public class AppointmentService {
         return appointment;
     }
 
-    public List<?> getAppointmentsOfLoggedUser(){
+    public List<?> getAppointmentsOfLoggedUser() {
         User user = userService.getLoggedUser();
         Long userId = user.getId();
         return switch (user.getUserType()) {

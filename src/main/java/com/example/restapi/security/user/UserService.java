@@ -5,12 +5,13 @@ import com.example.restapi.exception.AccessDeniedException;
 import com.example.restapi.exception.UserNotFoundException;
 import com.example.restapi.repository.DoctorRepository;
 import com.example.restapi.repository.PatientRepository;
+import com.example.restapi.security.jwt.JwtService;
 import com.example.restapi.security.role.Role;
 import com.example.restapi.security.role.RoleRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.security.core.Authentication;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -24,15 +25,11 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    private final RoleRepository roleRepository;
-
-    private final DoctorRepository doctorRepository;
-
-    private final PatientRepository patientRepository;
+    private final JwtService jwtService;
 
     public User getLoggedUser() {
         User user = findByUserName(SecurityContextHolder.getContext().getAuthentication().getName());
-        if(Objects.isNull(user)){
+        if (Objects.isNull(user)) {
             throw new UserNotFoundException("User not found");
         }
         return user;
@@ -43,7 +40,7 @@ public class UserService {
                 userRepository.findByUsername(username).get() : null;
     }
 
-    public void setRolesByUserName(String username, List<Role> roles){
+    public void setRolesByUserName(String username, List<Role> roles) {
         User user = findByUserName(username);
         user.setRoles(new HashSet<>(roles));
     }
@@ -53,18 +50,22 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User saveUserRaw(User user){
-        return userRepository.save(user);
+    public boolean checkAdmin() {
+        return Objects.equals(getLoggedUser().getUserType(), "Admin");
     }
 
-    public boolean checkAdmin(){
-        return getLoggedUser().getUserType().equals("Admin");
-    }
-
-    public void deleteCheck(Long id){
-        if(!id.equals(getLoggedUser().getId()) && !checkAdmin()){
+    public void deleteCheck(Long id) {
+        if (!Objects.equals(getLoggedUser().getId(), id) && !checkAdmin()) {
             throw new AccessDeniedException("Access denied!");
         }
+    }
+
+    public String generateTokenFromUserInput(User userInput){
+        User user = findByUserName(userInput.getUsername());
+        if(Objects.isNull(user) || !BCrypt.checkpw(userInput.getPassword(), user.getPassword())){
+            throw new BadCredentialsException("Bad credentials!");
+        }
+        return jwtService.generateToken(user);
     }
 
 }

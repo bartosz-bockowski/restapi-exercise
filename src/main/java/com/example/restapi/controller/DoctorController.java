@@ -9,7 +9,6 @@ import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -30,6 +29,7 @@ public class DoctorController {
 //    Poczytaj o @Inheritance X
 //    @DiscriminatorColumn, discriminatorType X
 //    dziedziczenie w springu X
+
     @PostMapping
     public ResponseEntity<DoctorDTO> save(@RequestBody DoctorCommand doctorCommand) {
         return new ResponseEntity<>(modelMapper

@@ -18,13 +18,18 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class AdminAction {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     @CreatedDate
     private LocalDateTime time;
+
     private AdminActionType type;
+
     @CreatedBy
     @ManyToOne
     private Admin admin;
+
 }
