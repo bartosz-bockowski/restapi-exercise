@@ -10,6 +10,7 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter  //czemu nie uzywamy data w encji
@@ -17,45 +18,35 @@ import java.time.LocalDate;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
-@EntityListeners(AuditingEntityListener.class)
+//@EntityListeners(AuditingEntityListener.class)
 public class Appointment {
 
     //@TODO
-    //wczytywanie rol z jwt - ZROBIONE
-    //patient tworzy appointmenty - ZROBIONE
-    //doctor i patient wyswietlanie swoich appointmentow - ZROBIONE
-    //doctor i patient anulowanie appointmentow
-    //status appointmentu - enum - doktor ustawia - ZROBIONE
-    //dotkor zrealizowanie appointmentu - tylko po dacie zaplanowanej - ZROBIONE
-    //doktor przy realizacji podaje stan zdrowia pacjenta - enum - ZROBIONE
-    //obiekt admin - ZROBIONE
-    //obiekt admin usuwa wszystkie konta - ZROBIONE
-    //doktor i pacjent usuwaja tylko swoje konta - ZROBIONE
-    //akcje admina tworza obiekt action - id - admin - enum co sie stalo - ZROBIONE
-    //atrybut admin z @createdby
-    //atrybut @createdby appointment nad patient
 
-    //auditor provider oraz auditoraware
-//    @EntityListener
-//    AuditinEntityListener do nasluchiwania tzn
-//    Aby poprawnie samo ustawiało sie pole oznaczone adntoacja @CreatedBy
-//    musi to byc skonfigurowane
-//    Pocyztaj rowniez o polu
-//    @LastModifiedBy
-//    @CreateDate
-//    @LastModifiedDate
-//    @Version
+//    Dodaj cancellowanie przez pacjenta, - ZROBIONE
+//    Dodaj w appointment version, lastModifiedBy, createdBy createdDate i createdBy - PROBLEMY
+//    Obiekt action bedzie mial nowe pole createdDate - ZROBIONE
+//    ZROBIONE - Dodaj endpoint dla admina do usuwania pacjentow i doktorow i nakladania na nich ograniczen - zmienianie statusu konta locked i enabled,
+//    ZROBIONE - ma to potem zostac rowniez wdrozone jako walidacja przy np zamawianiu wizyty przez pacjenta. To znaczy ze jesli pacjent bedzie mial konto locked to nie moze sie umowic na wizyte u danego doktora etc..
+//    Teraz tylko admin bedzie mogl edytowac i usuwac konta po ID - ZROBIONE
+//    Zrób endpoint który umożliwi adminowi wyświetlenie listy swoich akcji - ZROBIONE
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @CreatedDate
     private LocalDate date;
-    @CreatedBy
+//    @CreatedDate
+//    private LocalDateTime createdTime;
+//    @CreatedBy
     @ManyToOne
     private Patient patient;
     @ManyToOne
     private Doctor doctor;
     @Enumerated(EnumType.STRING)
     private AppointmentStatus status;
+//    @LastModifiedBy
+//    @ManyToOne
+//    private User lastChangedBy;
+//    @Version
+//    private int version;
 }

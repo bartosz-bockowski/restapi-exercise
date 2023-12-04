@@ -28,6 +28,10 @@ public class PatientService {
         return patientRepository.save(patient);
     }
 
+    public Patient saveRaw(Patient patient){
+        return patientRepository.save(patient);
+    }
+
     public Patient findById(Long id) {
         return patientRepository.findById(id)
                 .orElseThrow(() -> new PatientNotFoundException("Patient cannot be found!"));

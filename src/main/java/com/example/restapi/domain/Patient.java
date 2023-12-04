@@ -27,7 +27,4 @@ public class Patient extends User{
 
     private String pesel;
 
-    @OneToMany(mappedBy = "patient", cascade = CascadeType.REMOVE)
-    private List<Appointment> appointments = new ArrayList<>();
-
 }

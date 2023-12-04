@@ -24,7 +24,7 @@ public class AdminAction {
     private Long id;
 
     @CreatedDate
-    private LocalDateTime time;
+    private LocalDateTime createdDate;
 
     private AdminActionType type;
 

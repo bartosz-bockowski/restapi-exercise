@@ -32,6 +32,9 @@
                 <constraints nullable="true"/>
             </column>
             <column name="health" type="varchar(255)"/>
+            <column name="status" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
         </createTable>
     </changeSet>
 </databaseChangeLog>

@@ -9,6 +9,7 @@ import com.example.restapi.dto.UserDTO;
 import com.example.restapi.security.jwt.JwtService;
 import com.example.restapi.security.user.UserRepository;
 import com.example.restapi.security.user.UserService;
+import com.example.restapi.service.AdminService;
 import com.google.gson.Gson;
 import io.jsonwebtoken.Jwt;
 import lombok.Getter;
@@ -32,6 +33,8 @@ public class UserController {
 
     private final ModelMapper modelMapper;
 
+    private final AdminService adminService;
+
     @PostMapping
     public ResponseEntity<UserDTO> save(@RequestBody UserCommand userCommand) {
         return new ResponseEntity<>(modelMapper
@@ -42,6 +45,11 @@ public class UserController {
     @GetMapping("/jwtToken")
     public ResponseEntity<String> jwtToken(@RequestBody User userInput){
         return new ResponseEntity<>(userService.generateTokenFromUserInput(userInput),HttpStatus.OK);
+    }
+
+    @PostMapping("/changeStatus/{userId}")
+    public ResponseEntity<UserDTO> changeUserStatus(@PathVariable Long userId){
+        return new ResponseEntity<>(modelMapper.map(adminService.changeUserStatusById(userId),UserDTO.class),HttpStatus.OK);
     }
 
 }

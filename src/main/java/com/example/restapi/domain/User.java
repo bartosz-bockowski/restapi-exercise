@@ -1,5 +1,6 @@
 package com.example.restapi.domain;
 
+import com.example.restapi.model.UserStatus;
 import com.example.restapi.model.UserType;
 import com.example.restapi.security.role.Role;
 import com.fasterxml.jackson.annotation.JsonInclude;
@@ -41,11 +42,9 @@ public class User implements UserDetails {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles;
 
+    @Enumerated(EnumType.STRING)
+    private UserStatus status = UserStatus.ENABLED;
 
-
-//    private Boolean locked = false;
-//    private Boolean enabled = true;
-//
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return this.roles.stream()

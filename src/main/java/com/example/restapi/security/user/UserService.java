@@ -1,14 +1,20 @@
 package com.example.restapi.security.user;
 
 import com.example.restapi.domain.User;
+import com.example.restapi.dto.UserDTO;
 import com.example.restapi.exception.AccessDeniedException;
 import com.example.restapi.exception.UserNotFoundException;
+import com.example.restapi.model.AdminActionType;
+import com.example.restapi.model.UserStatus;
 import com.example.restapi.repository.DoctorRepository;
 import com.example.restapi.repository.PatientRepository;
 import com.example.restapi.security.jwt.JwtService;
 import com.example.restapi.security.role.Role;
 import com.example.restapi.security.role.RoleRepository;
+import com.example.restapi.service.AdminActionService;
 import lombok.RequiredArgsConstructor;
+import org.aspectj.asm.IModelFilter;
+import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCrypt;
@@ -40,6 +46,11 @@ public class UserService {
                 userRepository.findByUsername(username).get() : null;
     }
 
+    public User findById(Long id){
+        return userRepository.findById(id)
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
+    }
+
     public void setRolesByUserName(String username, List<Role> roles) {
         User user = findByUserName(username);
         user.setRoles(new HashSet<>(roles));
@@ -47,6 +58,10 @@ public class UserService {
 
     public User saveUser(User user) {
         user.setPassword(new BCryptPasswordEncoder().encode(user.getPassword()));
+        return userRepository.save(user);
+    }
+
+    public User saveUserRaw(User user){
         return userRepository.save(user);
     }
 
@@ -66,6 +81,10 @@ public class UserService {
             throw new BadCredentialsException("Bad credentials!");
         }
         return jwtService.generateToken(user);
+    }
+
+    public boolean isAdmin(){
+        return Objects.equals(getLoggedUser().getUserType(),"Admin");
     }
 
 }

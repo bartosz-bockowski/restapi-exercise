@@ -7,12 +7,10 @@ import com.example.restapi.domain.Patient;
 import com.example.restapi.domain.User;
 import com.example.restapi.dto.DoctorAppointmentDTO;
 import com.example.restapi.dto.PatientAppointmentDTO;
-import com.example.restapi.exception.AccessDeniedException;
-import com.example.restapi.exception.AppointmentCompletionTooEarlyException;
-import com.example.restapi.exception.AppointmentNotFoundException;
-import com.example.restapi.exception.UserNotFoundException;
+import com.example.restapi.exception.*;
 import com.example.restapi.model.AppointmentStatus;
 import com.example.restapi.model.PatientHealthStatus;
+import com.example.restapi.model.UserStatus;
 import com.example.restapi.repository.AppointmentRepository;
 import com.example.restapi.repository.DoctorRepository;
 import com.example.restapi.repository.PatientRepository;
@@ -48,6 +46,9 @@ public class AppointmentService {
     private final SpringDataUserDetailsService userDetailsService;
 
     public Appointment save(AppointmentCommand appointmentCommand) {
+        if(Objects.equals(userService.getLoggedUser().getStatus(), UserStatus.LOCKED)){
+            throw new UserLockedException("You are locked as a user!");
+        }
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.STRICT);
         Appointment appointment = modelMapper.map(appointmentCommand, Appointment.class);
 
@@ -92,23 +93,23 @@ public class AppointmentService {
     public Appointment completeById(Long appointmentId, int healthId) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new AppointmentNotFoundException("Appointment doesn't exist!"));
-        if (!Objects.equals(appointment.getDoctor().getId(), userService.getLoggedUser().getId())) {
-            throw new AccessDeniedException("Access denied!");
-        }
-        if (appointment.getDate().isAfter(LocalDate.now())) {
-            throw new AppointmentCompletionTooEarlyException("It's too early to complete this appointment!");
-        }
-        appointment.setStatus(AppointmentStatus.COMPLETED);
-        Patient patient = appointment.getPatient();
-        for (PatientHealthStatus status : PatientHealthStatus.values()) {
-            //if id is wrong, then no change
-            if (status.getId() == healthId) {
-                patient.setHealth(status);
-                break;
-            }
-        }
-        patientService.save(patient);
+//        if (!Objects.equals(appointment.getDoctor().getId(), userService.getLoggedUser().getId())) {
+//            throw new AccessDeniedException("Access denied!");
+//        }
+//        if (appointment.getDate().isAfter(LocalDate.now())) {
+//            throw new AppointmentCompletionTooEarlyException("It's too early to complete this appointment!");
+//        }
+//        appointment.setStatus(AppointmentStatus.COMPLETED);
+//        Patient patient = appointment.getPatient();
+//        for (PatientHealthStatus status : PatientHealthStatus.values()) {
+//            //if id is wrong, then no change
+//            if (status.getId() == healthId) {
+//                patient.setHealth(status);
+//                break;
+//            }
+//        }
         appointmentRepository.save(appointment);
+//        patientService.saveRaw(patient);
         return appointment;
     }
 
