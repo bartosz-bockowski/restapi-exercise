@@ -1,7 +1,6 @@
 package com.example.restapi.security.jwt;
 
 import com.example.restapi.domain.User;
-import com.example.restapi.security.role.RoleRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -13,14 +12,12 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
-import java.util.*;
+import java.util.Date;
 import java.util.function.Function;
 
 @Service
 @RequiredArgsConstructor
 public class JwtService {
-
-    private final RoleRepository roleRepository;
 
     @Value("${secretKey}")
     private String secretKey;
@@ -29,35 +26,27 @@ public class JwtService {
         return extractClaim(token, Claims::getSubject);
     }
 
-    public List extractRoles(String token) {
-        return ((ArrayList) extractAllClaims(token).get("roleNames")).stream()
-                .map(roleName -> roleRepository.findByName(roleName.toString()))
-                .filter(Objects::nonNull)
-                .toList();
-    }
-
     public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
 
     public String generateToken(User user) {
-        return generateToken(new HashMap<>(), user);
-    }
-
-    public String generateToken(Map<String, Object> extraClaims, User user) {
         return Jwts.builder()
-                .setClaims(extraClaims)
-                .setSubject(user.getUsername())
+                .setSubject(String.format("%s,%s", user.getId(), user.getUsername()))
+                .claim("role", user.getUserType())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60))
+                .setExpiration(new Date(System.currentTimeMillis() + 24 * 60 * 60 * 1000))
                 .signWith(getSignInKey(), SignatureAlgorithm.HS256)
                 .compact();
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
-        final String username = extractUsername(token);
-        return Objects.equals(username, userDetails.getUsername()) && !isTokenExpired(token);
+        String[] jwtSubject = extractUsername(token).split(",");
+        final String role = (String) extractClaim(token, claims -> claims.get("role"));
+        return jwtSubject[1].equals(userDetails.getUsername())
+                && !isTokenExpired(token)
+                && role.equals(userDetails.getAuthorities().iterator().next().getAuthority());
     }
 
     public boolean isTokenExpired(String token) {
@@ -68,7 +57,7 @@ public class JwtService {
         return extractClaim(token, Claims::getExpiration);
     }
 
-    private Claims extractAllClaims(String token) {
+    Claims extractAllClaims(String token) {
         return Jwts.parserBuilder()
                 .setSigningKey(getSignInKey())
                 .build()

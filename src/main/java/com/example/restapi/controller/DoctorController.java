@@ -11,6 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -31,7 +32,7 @@ public class DoctorController {
 //    dziedziczenie w springu X
 
     @PostMapping
-    public ResponseEntity<DoctorDTO> save(@RequestBody DoctorCommand doctorCommand) {
+    public ResponseEntity<DoctorDTO> save(@Valid @RequestBody DoctorCommand doctorCommand) {
         return new ResponseEntity<>(modelMapper
                 .map(doctorService.save(
                         modelMapper.map(doctorCommand, Doctor.class)), DoctorDTO.class), HttpStatus.CREATED);

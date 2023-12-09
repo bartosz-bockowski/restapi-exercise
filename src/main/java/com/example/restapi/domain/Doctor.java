@@ -3,9 +3,7 @@ package com.example.restapi.domain;
 import com.example.restapi.model.DoctorSpecializationType;
 import lombok.*;
 
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import javax.persistence.Entity;
 
 @Entity
 @Getter
@@ -15,12 +13,6 @@ import java.util.List;
 @NoArgsConstructor
 public class Doctor extends User {
 
-    private String name;
-
-    private String surname;
-
     private DoctorSpecializationType specialization;
-
-    private int age;
 
 }

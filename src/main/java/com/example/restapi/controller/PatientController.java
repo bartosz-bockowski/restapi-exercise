@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 
 @RestController
@@ -21,7 +22,7 @@ public class PatientController {
     private final ModelMapper modelMapper;
 
     @PostMapping
-    public ResponseEntity<PatientDTO> save(@RequestBody PatientCommand patientCommand) {
+    public ResponseEntity<PatientDTO> save(@Valid @RequestBody PatientCommand patientCommand) {
         return new ResponseEntity<>(modelMapper
                 .map(patientService.save(
                         modelMapper.map(patientCommand, Patient.class)), PatientDTO.class), HttpStatus.CREATED);
@@ -44,6 +45,6 @@ public class PatientController {
     @DeleteMapping("/{id}")
     private ResponseEntity<PatientDTO> delete(@PathVariable Long id) {
         patientService.deleteById(id);
-        return new ResponseEntity<>(null, HttpStatus.OK); //HttpStatus.NO_CONTENT?
+        return new ResponseEntity<>(null, HttpStatus.OK);
     }
 }

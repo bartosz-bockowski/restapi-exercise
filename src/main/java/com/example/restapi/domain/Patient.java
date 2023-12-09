@@ -3,9 +3,10 @@ package com.example.restapi.domain;
 import com.example.restapi.model.PatientHealthStatus;
 import lombok.*;
 
-import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.List;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 
 @Entity
 @Getter
@@ -14,17 +15,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @DiscriminatorValue("Patient")
-public class Patient extends User{
+public class Patient extends User {
 
     @Enumerated(EnumType.STRING)
     private PatientHealthStatus health;
-
-    private String name;
-
-    private String surname;
-
-    private int age;
-
-    private String pesel;
 
 }

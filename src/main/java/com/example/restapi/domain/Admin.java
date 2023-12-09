@@ -15,12 +15,6 @@ import java.util.List;
 @NoArgsConstructor
 public class Admin extends User {
 
-    private String name;
-
-    private String surname;
-
-    private int age;
-
     @OneToMany(mappedBy = "admin")
     private List<AdminAction> actions = new ArrayList<>();
 

@@ -1,7 +1,6 @@
 package com.example.restapi.service;
 
 import com.example.restapi.domain.Doctor;
-import com.example.restapi.exception.AccessDeniedException;
 import com.example.restapi.exception.DoctorNotFoundException;
 import com.example.restapi.model.AdminActionType;
 import com.example.restapi.repository.DoctorRepository;
@@ -25,6 +24,7 @@ public class DoctorService {
     private final AdminActionService adminActionService;
 
     public Doctor save(Doctor doctor) {
+        userService.checkIfUserExistsByPeselAndUsername(doctor.getPesel(),doctor.getUsername());
         doctor.setPassword(bCryptPasswordEncoder.encode(doctor.getPassword()));
         return doctorRepository.save(doctor);
     }

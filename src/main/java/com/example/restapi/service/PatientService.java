@@ -28,7 +28,7 @@ public class PatientService {
         return patientRepository.save(patient);
     }
 
-    public Patient saveRaw(Patient patient){
+    public Patient update(Patient patient) {
         return patientRepository.save(patient);
     }
 

@@ -7,7 +7,8 @@ public enum PatientHealthStatus {
     SICK(0),
     HEALTHY(1);
     private int id;
-    PatientHealthStatus(int id){
+
+    PatientHealthStatus(int id) {
 
     }
 }
