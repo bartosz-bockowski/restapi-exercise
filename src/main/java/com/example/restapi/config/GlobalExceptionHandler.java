@@ -1,5 +1,6 @@
-package com.example.restapi.model;
+package com.example.restapi.config;
 
+import com.example.restapi.model.ApiError;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
