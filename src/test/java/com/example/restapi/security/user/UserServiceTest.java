@@ -80,6 +80,15 @@ class UserServiceTest {
 
     @Test
     void testUserServiceUpdateUser() {
+        User user = createSampleUser();
+        assertDoesNotThrow(() -> underTest.updateUser(user));
+        User updatedUser = underTest.updateUser(user);
+        System.out.println(updatedUser);
+        assertNotNull(updatedUser);
+        assertEquals(user.getId(), updatedUser.getId());
+    }
+
+    User createSampleUser() {
         User user = new User();
         user.setId(1L);
         user.setUsername("username");
@@ -88,11 +97,7 @@ class UserServiceTest {
         user.setSurname("surname");
         user.setAge(1);
         user.setPesel("12312312312");
-        assertDoesNotThrow(() -> underTest.updateUser(user));
-        User updatedUser = underTest.updateUser(user);
-        System.out.println(updatedUser);
-        assertNotNull(updatedUser);
-        assertEquals(user.getId(), updatedUser.getId());
+        return user;
     }
 
 }
