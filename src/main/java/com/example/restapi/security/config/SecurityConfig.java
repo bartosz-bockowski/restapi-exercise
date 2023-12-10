@@ -32,7 +32,9 @@ public class SecurityConfig {
         http
                 .csrf().disable()
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers(new AntPathRequestMatcher("/api/v1/admin/**")).hasAuthority("ADMIN")
+                        .requestMatchers(new AntPathRequestMatcher("/api/v1/admin/**")).hasAnyAuthority("ADMIN")
+                        .requestMatchers(new AntPathRequestMatcher("/api/v1/doctor/**")).hasAnyAuthority("DOCTOR", "ADMIN")
+                        .requestMatchers(new AntPathRequestMatcher("/api/v1/patient/**")).hasAnyAuthority("PATIENT", "ADMIN")
                         .anyRequest().permitAll()
                 )
                 .authenticationProvider(authenticationProvider())

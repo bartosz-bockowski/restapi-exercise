@@ -4,37 +4,44 @@ import com.example.restapi.domain.User;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.anyLong;
-import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
-@DataJpaTest
+//@DataJpaTest
+//    @MockitoSettings
+//    @SpringBootTest
+//@MockitoSettings(strictness = Strictness.LENIENT)
+//@ExtendWith(MockitoExtension.class)
 class UserServiceTest {
 
     @Mock
     private UserRepository userRepository;
 
     @Mock
+//    @InjectMocks -> istotne
+//    @Spy
+
+
     private Authentication authentication;
 
-    private UserService underTest;
+    @InjectMocks
+    private UserService userService;
 
     private AutoCloseable autoCloseable;
 
     @BeforeEach
     void setUp() {
         autoCloseable = MockitoAnnotations.openMocks(this);
-        underTest = new UserService(userRepository);
     }
 
     @AfterEach
@@ -51,21 +58,21 @@ class UserServiceTest {
         given(userRepository.findByUsername(anyString())).willReturn(Optional.of(new User()));
         given(authentication.getName()).willReturn("name");
 
-        underTest.findByUserName(anyString());
+        userService.findByUserName(anyString());
 
         verify(userRepository).findByUsername(anyString());
-        assertDoesNotThrow(() -> underTest.findByUserName(anyString()));
-        assertNotNull(underTest.findByUserName(anyString()));
+        assertDoesNotThrow(() -> userService.findByUserName(anyString()));
+        assertNotNull(userService.findByUserName(anyString()));
     }
 
     @Test
     void testUserServiceFindById() {
         given(userRepository.findById(anyLong())).willReturn(Optional.of(new User()));
 
-        underTest.findById(anyLong());
+        userService.findById(anyLong());
         verify(userRepository).findById(anyLong());
-        assertDoesNotThrow(() -> underTest.findById(anyLong()));
-        assertNotNull(underTest.findById(anyLong()));
+        assertDoesNotThrow(() -> userService.findById(anyLong()));
+        assertNotNull(userService.findById(anyLong()));
     }
 
     @Test
@@ -74,18 +81,24 @@ class UserServiceTest {
         given(authentication.getName()).willReturn("fjfx");
         SecurityContextHolder.getContext().setAuthentication(authentication);
 
-        assertDoesNotThrow(() -> underTest.getLoggedUser());
-        assertNotNull(underTest.getLoggedUser());
+        assertDoesNotThrow(() -> userService.getLoggedUser());
+        assertNotNull(userService.getLoggedUser());
     }
 
+    //sonarInt
     @Test
     void testUserServiceUpdateUser() {
-        User user = createSampleUser();
-        assertDoesNotThrow(() -> underTest.updateUser(user));
-        User updatedUser = underTest.updateUser(user);
-        System.out.println(updatedUser);
-        assertNotNull(updatedUser);
-        assertEquals(user.getId(), updatedUser.getId());
+        User expected = createSampleUser();
+        given(userService.updateUser(any(User.class))).willReturn(expected);
+//        when(userService.updateUser(any(User.class))).thenReturn(expected);
+        User actual = userService.updateUser(expected);
+        assertEquals(actual, expected);
+        verify(userRepository).save(expected);
+//        User user = createSampleUser();
+//        assertDoesNotThrow(() -> userService.updateUser(user));
+//        User updatedUser = userService.updateUser(user);
+//        assertNotNull(updatedUser);
+//        assertEquals(user.getId(), updatedUser.getId());
     }
 
     User createSampleUser() {
