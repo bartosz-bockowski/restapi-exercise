@@ -2,7 +2,9 @@ package com.example.restapi.controller;
 
 import com.example.restapi.domain.Doctor;
 import com.example.restapi.model.DoctorSpecializationType;
+import com.example.restapi.security.user.UserService;
 import com.example.restapi.service.AdminService;
+import com.example.restapi.service.DoctorService;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,28 +24,32 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
-//@ActiveProfiles("application-tests")
 @AutoConfigureTestDatabase
-//@ConfigurationProperties(prefix = "spring.liquibase", ignoreUnknownFields = false)
 class DoctorControllerIntegrationTest {
 
-    //    co to
+    @Autowired
+    private UserService userService;
+
+    //    co to - symulacja calej aplikacji
     private MockMvc mockMvc;
 
     @Autowired
-//    co to
+//    co to - konfiguracja
     private WebApplicationContext webApplicationContext;
 
     @Autowired
     private AdminService adminService;
 
+    @Autowired
+    private DoctorService doctorService;
+
     private Doctor doctor;
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws Exception {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext)
                 .build();
-        doctor = createSampleDoctor();
+        doctor = doctorService.save(createSampleDoctor());
     }
 
     public Doctor createSampleDoctor() {
@@ -60,8 +66,8 @@ class DoctorControllerIntegrationTest {
     }
 
     @Test
-    @WithUserDetails(value = "username", setupBefore = TestExecutionEvent.TEST_EXECUTION, userDetailsServiceBeanName = "userDetailsService")
-    void shouldGetAllDoctors() throws Exception {
+    @WithUserDetails(value = "username", setupBefore = TestExecutionEvent.TEST_EXECUTION, userDetailsServiceBeanName = "userService")
+    void shouldGetAllDoctors(@Autowired UserService userService) throws Exception {
         this.mockMvc.perform(get("/api/v1/doctor/all")
                         .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())

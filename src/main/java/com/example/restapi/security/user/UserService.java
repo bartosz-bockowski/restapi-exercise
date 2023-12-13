@@ -22,6 +22,10 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
+    public User saveUser(User user) {
+        return userRepository.save(user);
+    }
+
     public User getLoggedUser() {
         User user = findByUserName(SecurityContextHolder.getContext().getAuthentication().getName());
         if (Objects.isNull(user)) {
