@@ -2,6 +2,7 @@ package com.example.restapi.controller;
 
 import com.example.restapi.domain.Doctor;
 import com.example.restapi.model.DoctorSpecializationType;
+import com.example.restapi.model.UserStatus;
 import com.example.restapi.security.user.UserService;
 import com.example.restapi.service.AdminService;
 import com.example.restapi.service.DoctorService;
@@ -54,14 +55,15 @@ class DoctorControllerIntegrationTest {
 
     public Doctor createSampleDoctor() {
         Doctor doctor = new Doctor();
-        doctor.setId(1L);
         doctor.setUsername("username");
         doctor.setPassword("123123123");
         doctor.setName("name");
         doctor.setSurname("surname");
         doctor.setAge(1);
-        doctor.setPesel("12312312312");
+        doctor.setPesel("k1mvkao0611");
         doctor.setSpecialization(DoctorSpecializationType.SPEC1);
+        doctor.setStatus(UserStatus.ENABLED);
+        doctor.setLocked(false);
         return doctor;
     }
 
