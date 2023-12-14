@@ -1,9 +1,11 @@
 package com.example.restapi.controller;
 
 import com.example.restapi.command.DoctorCommand;
+import com.example.restapi.domain.Admin;
 import com.example.restapi.domain.Doctor;
 import com.example.restapi.model.DoctorSpecializationType;
 import com.example.restapi.security.user.UserService;
+import com.example.restapi.service.AdminService;
 import com.example.restapi.service.DoctorService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -20,8 +22,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -43,6 +44,9 @@ class DoctorControllerIntegrationTest {
     private DoctorService doctorService;
 
     @Autowired
+    private AdminService adminService;
+
+    @Autowired
     private ObjectMapper objectMapper;
 
     long nextPesel = 10000000000L;
@@ -54,6 +58,15 @@ class DoctorControllerIntegrationTest {
                 .build();
         doctorService.save(createNextDoctor());
         doctorService.save(createNextDoctor());
+        Admin admin = new Admin();
+        admin.setUsername("admin1");
+        admin.setPassword("123");
+        admin.setAge(1);
+        admin.setName("name");
+        admin.setSurname("surname");
+        admin.setPesel("adminXadmin");
+        admin = adminService.save(admin);
+        System.out.println(admin.getUserType());
     }
 
     String getNextPesel() {
@@ -80,8 +93,7 @@ class DoctorControllerIntegrationTest {
     @WithUserDetails(value = "100000", setupBefore = TestExecutionEvent.TEST_EXECUTION, userDetailsServiceBeanName = "userService")
     void shouldGetAllDoctors() throws Exception {
         this.mockMvc.perform(get("/api/v1/doctor/all")
-                        .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON))
+                        .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)));
     }
@@ -104,6 +116,25 @@ class DoctorControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.pesel", equalTo(doctorCommand.getPesel())));
+    }
+
+    @Test
+    @WithUserDetails(value = "100000", setupBefore = TestExecutionEvent.TEST_EXECUTION, userDetailsServiceBeanName = "userService")
+    void shouldGetDoctor() throws Exception {
+        this.mockMvc.perform(get("/api/v1/doctor/1")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.pesel", equalTo("10000000000")));
+    }
+
+    @Test
+    @WithUserDetails(value = "admin1", setupBefore = TestExecutionEvent.TEST_EXECUTION, userDetailsServiceBeanName = "userService")
+    void shouldDeleteDoctor() throws Exception {
+        this.mockMvc.perform(delete("/api/v1/doctor/1"))
+                .andExpect(status().isOk());
+
+        this.mockMvc.perform(get("/api/v1/doctor/1"))
+                .andExpect(status().isNotFound());
     }
 
 }

@@ -23,14 +23,6 @@ public class DoctorController {
 
     private final ModelMapper modelMapper;
 
-    //todo zobacz jaka jest roznica miedzy PutMapping a PatchMapping, flyway, liquibase, modelmapper, mapstruct
-//    do appointment stworzy @Post, stowrzmy rowniez metode aby Pacjent i doktor mogli wypisywac swoje wizyty (aktualnie za pomoca swojego ID
-//    a potem sesji. Do tego dodac walidacje @Notblack etc. - zrobione dodawanie appointmentu, bez list, bez security, bez walidacji
-//    mozliwosc zarejestrowania sie jako patient i doctor X
-//    Poczytaj o @Inheritance X
-//    @DiscriminatorColumn, discriminatorType X
-//    dziedziczenie w springu X
-
     @PostMapping
     public ResponseEntity<DoctorDTO> save(@Valid @RequestBody DoctorCommand doctorCommand) {
         return new ResponseEntity<>(modelMapper

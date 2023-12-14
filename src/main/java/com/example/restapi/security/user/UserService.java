@@ -11,10 +11,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +23,14 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
+    public List<String> getAllUsernames() {
+        return userRepository.findAll().stream()
+                .map(User::getUsername)
+                .toList();
+    }
+
     public User getLoggedUser() {
+        String name = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = findByUserName(SecurityContextHolder.getContext().getAuthentication().getName());
         if (Objects.isNull(user)) {
             throw new UserNotFoundException("User not found");
@@ -48,8 +52,14 @@ public class UserService implements UserDetailsService {
         return userRepository.save(user);
     }
 
+    public boolean isAdmin() {
+        String x = (getLoggedUser().getUserType());
+        String y = ("Admin");
+        return Objects.equals(getLoggedUser().getUserType(), "Admin");
+    }
+
     public void deleteCheck(Long id) {
-        if (!Objects.equals(getLoggedUser().getId(), id)) {
+        if (!Objects.equals(getLoggedUser().getId(), id) && !isAdmin()) {
             throw new AccessDeniedException("Access denied!");
         }
     }

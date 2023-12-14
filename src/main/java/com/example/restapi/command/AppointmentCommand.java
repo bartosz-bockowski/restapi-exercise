@@ -1,10 +1,10 @@
-package com.example.restapi.command.appointment;
+package com.example.restapi.command;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
 
 @Data
@@ -12,9 +12,10 @@ import java.time.LocalDate;
 @NoArgsConstructor
 public class AppointmentCommand {
 
-    @NotBlank(message = "sdssds")
+    @NotNull
     private LocalDate date;
 
-    @NotBlank
+    @NotNull
     private Long doctorId;
+    
 }

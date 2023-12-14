@@ -1,6 +1,6 @@
 package com.example.restapi.service;
 
-import com.example.restapi.command.appointment.AppointmentCommand;
+import com.example.restapi.command.AppointmentCommand;
 import com.example.restapi.domain.Appointment;
 import com.example.restapi.domain.Doctor;
 import com.example.restapi.domain.Patient;

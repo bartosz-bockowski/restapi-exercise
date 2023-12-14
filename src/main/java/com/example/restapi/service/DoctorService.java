@@ -24,7 +24,7 @@ public class DoctorService {
     private final AdminActionService adminActionService;
 
     public Doctor save(Doctor doctor) {
-        userService.checkIfUserExistsByPeselAndUsername(doctor.getPesel(),doctor.getUsername());
+        userService.checkIfUserExistsByPeselAndUsername(doctor.getPesel(), doctor.getUsername());
         doctor.setPassword(bCryptPasswordEncoder.encode(doctor.getPassword()));
         return doctorRepository.save(doctor);
     }
@@ -40,8 +40,12 @@ public class DoctorService {
 
     public void deleteById(Long id) {
         userService.deleteCheck(id);
+
+        if (userService.isAdmin()) {
+            adminActionService.createAndSaveAction(AdminActionType.DELETE_DOCTOR);
+        }
+
         doctorRepository.delete(doctorRepository.findById(id)
                 .orElseThrow(() -> new DoctorNotFoundException("Doctor cannot be found!")));
-        adminActionService.createAndSaveAction(AdminActionType.DELETE_DOCTOR);
     }
 }

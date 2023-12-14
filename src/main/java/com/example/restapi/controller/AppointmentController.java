@@ -1,6 +1,6 @@
 package com.example.restapi.controller;
 
-import com.example.restapi.command.appointment.AppointmentCommand;
+import com.example.restapi.command.AppointmentCommand;
 import com.example.restapi.dto.DoctorAppointmentDTO;
 import com.example.restapi.dto.PatientAppointmentDTO;
 import com.example.restapi.service.AppointmentService;
