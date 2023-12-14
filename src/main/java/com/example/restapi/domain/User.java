@@ -24,6 +24,7 @@ import java.util.List;
 @NoArgsConstructor
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "userType", discriminatorType = DiscriminatorType.STRING)
+@Table(name = "userCustomName")
 public class User implements UserDetails, Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

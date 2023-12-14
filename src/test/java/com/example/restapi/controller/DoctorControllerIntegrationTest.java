@@ -2,10 +2,10 @@ package com.example.restapi.controller;
 
 import com.example.restapi.domain.Doctor;
 import com.example.restapi.model.DoctorSpecializationType;
-import com.example.restapi.model.UserStatus;
 import com.example.restapi.security.user.UserService;
 import com.example.restapi.service.AdminService;
 import com.example.restapi.service.DoctorService;
+import com.google.gson.Gson;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +20,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -44,37 +44,54 @@ class DoctorControllerIntegrationTest {
     @Autowired
     private DoctorService doctorService;
 
-    private Doctor doctor;
+    long nextPesel = 10000000000L;
+    long nextUsername = 100000L;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext)
                 .build();
-        doctor = doctorService.save(createSampleDoctor());
+        doctorService.save(createNextDoctor());
+        doctorService.save(createNextDoctor());
     }
 
-    public Doctor createSampleDoctor() {
+    String getNextPesel() {
+        return String.valueOf(nextPesel++);
+    }
+
+    String getNextUsername() {
+        return String.valueOf(nextUsername++);
+    }
+
+    public Doctor createNextDoctor() {
         Doctor doctor = new Doctor();
-        doctor.setUsername("username");
-        doctor.setPassword("123123123");
+        doctor.setUsername(getNextUsername());
+        doctor.setPassword("123");
         doctor.setName("name");
         doctor.setSurname("surname");
         doctor.setAge(1);
-        doctor.setPesel("k1mvkao0611");
+        doctor.setPesel(getNextPesel());
         doctor.setSpecialization(DoctorSpecializationType.SPEC1);
-        doctor.setStatus(UserStatus.ENABLED);
-        doctor.setLocked(false);
         return doctor;
     }
 
     @Test
-    @WithUserDetails(value = "username", setupBefore = TestExecutionEvent.TEST_EXECUTION, userDetailsServiceBeanName = "userService")
-    void shouldGetAllDoctors(@Autowired UserService userService) throws Exception {
+    @WithUserDetails(value = "100000", setupBefore = TestExecutionEvent.TEST_EXECUTION, userDetailsServiceBeanName = "userService")
+    void shouldGetAllDoctors() throws Exception {
         this.mockMvc.perform(get("/api/v1/doctor/all")
                         .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.content", hasSize(1)));
+                .andExpect(jsonPath("$", hasSize(2)));
+    }
+
+    @Test
+    @WithUserDetails(value = "100000", setupBefore = TestExecutionEvent.TEST_EXECUTION, userDetailsServiceBeanName = "userService")
+    void shouldPostDoctor() throws Exception {
+        this.mockMvc.perform(post("/api/v1/doctor")
+                        .accept(MediaType.APPLICATION_JSON)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new Gson().toJson(createNextDoctor())))
+                .andExpect(status().isCreated());
     }
 
 }

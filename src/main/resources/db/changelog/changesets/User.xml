@@ -2,8 +2,8 @@
         xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
         xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
-    <changeSet id="5550001454" author="Bartek">
-        <createTable tableName="user">
+    <changeSet id="551114515454" author="Bartek">
+        <createTable tableName="user_custom_name">
             <column name="id" type="bigint" autoIncrement="true">
                 <constraints primaryKey="true" unique="true"/>
             </column>
