@@ -1,11 +1,11 @@
 package com.example.restapi.controller;
 
+import com.example.restapi.command.DoctorCommand;
 import com.example.restapi.domain.Doctor;
 import com.example.restapi.model.DoctorSpecializationType;
 import com.example.restapi.security.user.UserService;
-import com.example.restapi.service.AdminService;
 import com.example.restapi.service.DoctorService;
-import com.google.gson.Gson;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,10 +39,10 @@ class DoctorControllerIntegrationTest {
     private WebApplicationContext webApplicationContext;
 
     @Autowired
-    private AdminService adminService;
+    private DoctorService doctorService;
 
     @Autowired
-    private DoctorService doctorService;
+    private ObjectMapper objectMapper;
 
     long nextPesel = 10000000000L;
     long nextUsername = 100000L;
@@ -87,10 +87,19 @@ class DoctorControllerIntegrationTest {
     @Test
     @WithUserDetails(value = "100000", setupBefore = TestExecutionEvent.TEST_EXECUTION, userDetailsServiceBeanName = "userService")
     void shouldPostDoctor() throws Exception {
+        DoctorCommand doctorCommand = new DoctorCommand();
+        doctorCommand.setUsername(getNextUsername());
+        doctorCommand.setPassword("pass");
+        doctorCommand.setPesel(getNextPesel());
+        doctorCommand.setName("nnn");
+        doctorCommand.setSurname("sss");
+        doctorCommand.setAge(1);
+        doctorCommand.setSpecialization(DoctorSpecializationType.SPEC1);
+
         this.mockMvc.perform(post("/api/v1/doctor")
+                        .content(objectMapper.writeValueAsString(doctorCommand))
                         .accept(MediaType.APPLICATION_JSON)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(new Gson().toJson(createNextDoctor())))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
     }
 
