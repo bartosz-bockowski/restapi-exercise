@@ -1,12 +1,11 @@
 package com.example.restapi.controller;
 
-import com.example.restapi.command.DoctorCommand;
+import com.example.restapi.command.PatientCommand;
 import com.example.restapi.domain.Admin;
-import com.example.restapi.domain.Doctor;
-import com.example.restapi.exception.DoctorNotFoundException;
-import com.example.restapi.model.DoctorSpecializationType;
+import com.example.restapi.domain.Patient;
+import com.example.restapi.exception.PatientNotFoundException;
 import com.example.restapi.service.AdminService;
-import com.example.restapi.service.DoctorService;
+import com.example.restapi.service.PatientService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,17 +28,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureTestDatabase
-class DoctorControllerIntegrationTest {
+public class PatientControllerIntegrationTest {
 
-    //symulacja calej aplikacji
     private MockMvc mockMvc;
 
     @Autowired
-    //konfiguracja
     private WebApplicationContext webApplicationContext;
 
     @Autowired
-    private DoctorService doctorService;
+    private PatientService patientService;
 
     @Autowired
     private AdminService adminService;
@@ -54,8 +51,8 @@ class DoctorControllerIntegrationTest {
     void setUp() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext)
                 .build();
-        doctorService.save(createNextDoctor());
-        doctorService.save(createNextDoctor());
+        patientService.save(createNextPatient());
+        patientService.save(createNextPatient());
         Admin admin = new Admin();
         admin.setUsername("admin1");
         admin.setPassword("123");
@@ -74,22 +71,21 @@ class DoctorControllerIntegrationTest {
         return String.valueOf(nextUsername++);
     }
 
-    public Doctor createNextDoctor() {
-        Doctor doctor = new Doctor();
-        doctor.setUsername(getNextUsername());
-        doctor.setPassword("123");
-        doctor.setName("name");
-        doctor.setSurname("surname");
-        doctor.setAge(1);
-        doctor.setPesel(getNextPesel());
-        doctor.setSpecialization(DoctorSpecializationType.SPEC1);
-        return doctor;
+    public Patient createNextPatient() {
+        Patient patient = new Patient();
+        patient.setUsername(getNextUsername());
+        patient.setPassword("123");
+        patient.setName("name");
+        patient.setSurname("surname");
+        patient.setAge(1);
+        patient.setPesel(getNextPesel());
+        return patient;
     }
 
     @Test
     @WithUserDetails(value = "100000", setupBefore = TestExecutionEvent.TEST_EXECUTION, userDetailsServiceBeanName = "userService")
-    void shouldGetAllDoctors() throws Exception {
-        this.mockMvc.perform(get("/api/v1/doctor/all")
+    void shouldGetAllPatients() throws Exception {
+        this.mockMvc.perform(get("/api/v1/patient/all")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)));
@@ -97,28 +93,27 @@ class DoctorControllerIntegrationTest {
 
     @Test
     @WithUserDetails(value = "100000", setupBefore = TestExecutionEvent.TEST_EXECUTION, userDetailsServiceBeanName = "userService")
-    void shouldPostDoctor() throws Exception {
-        DoctorCommand doctorCommand = new DoctorCommand();
-        doctorCommand.setUsername(getNextUsername());
-        doctorCommand.setPassword("pass");
-        doctorCommand.setPesel(getNextPesel());
-        doctorCommand.setName("nnn");
-        doctorCommand.setSurname("sss");
-        doctorCommand.setAge(1);
-        doctorCommand.setSpecialization(DoctorSpecializationType.SPEC1);
+    void shouldPostPatient() throws Exception {
+        PatientCommand patientCommand = new PatientCommand();
+        patientCommand.setUsername(getNextUsername());
+        patientCommand.setPassword("pass");
+        patientCommand.setPesel(getNextPesel());
+        patientCommand.setName("nnn");
+        patientCommand.setSurname("sss");
+        patientCommand.setAge(1);
 
-        this.mockMvc.perform(post("/api/v1/doctor")
-                        .content(objectMapper.writeValueAsString(doctorCommand))
+        this.mockMvc.perform(post("/api/v1/patient")
+                        .content(objectMapper.writeValueAsString(patientCommand))
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.pesel", equalTo(doctorCommand.getPesel())));
+                .andExpect(jsonPath("$.pesel", equalTo(patientCommand.getPesel())));
     }
 
     @Test
     @WithUserDetails(value = "100000", setupBefore = TestExecutionEvent.TEST_EXECUTION, userDetailsServiceBeanName = "userService")
     void shouldGetDoctor() throws Exception {
-        this.mockMvc.perform(get("/api/v1/doctor/1")
+        this.mockMvc.perform(get("/api/v1/patient/1")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.pesel", equalTo("10000000000")));
@@ -126,20 +121,20 @@ class DoctorControllerIntegrationTest {
 
     @Test
     @WithUserDetails(value = "100000", setupBefore = TestExecutionEvent.TEST_EXECUTION, userDetailsServiceBeanName = "userService")
-    void shouldDeleteDoctorAsDoctor() throws Exception {
-        this.mockMvc.perform(delete("/api/v1/doctor/1"))
+    void shouldDeletePatientAsDoctor() throws Exception {
+        this.mockMvc.perform(delete("/api/v1/patient/1"))
                 .andExpect(status().isOk());
 
-        Assertions.assertThrows(DoctorNotFoundException.class, () -> doctorService.findById(1L));
+        Assertions.assertThrows(PatientNotFoundException.class, () -> patientService.findById(1L));
     }
 
     @Test
     @WithUserDetails(value = "admin1", setupBefore = TestExecutionEvent.TEST_EXECUTION, userDetailsServiceBeanName = "userService")
-    void shouldDeleteDoctorAsAdmin() throws Exception {
-        this.mockMvc.perform(delete("/api/v1/doctor/1"))
+    void shouldDeletePatientAsAdmin() throws Exception {
+        this.mockMvc.perform(delete("/api/v1/patient/1"))
                 .andExpect(status().isOk());
 
-        Assertions.assertThrows(DoctorNotFoundException.class, () -> doctorService.findById(1L));
+        Assertions.assertThrows(PatientNotFoundException.class, () -> patientService.findById(1L));
     }
 
 }
