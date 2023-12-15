@@ -19,17 +19,6 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @EntityListeners(AuditingEntityListener.class)
 public class Appointment {
-
-    //@TODO
-
-//    Dodaj cancellowanie przez pacjenta, - ZROBIONE
-//    Dodaj w appointment version, lastModifiedBy, createdBy createdDate i createdBy - PROBLEMY
-//    Obiekt action bedzie mial nowe pole createdDate - ZROBIONE
-//    ZROBIONE - Dodaj endpoint dla admina do usuwania pacjentow i doktorow i nakladania na nich ograniczen - zmienianie statusu konta locked i enabled,
-//    ZROBIONE - ma to potem zostac rowniez wdrozone jako walidacja przy np zamawianiu wizyty przez pacjenta. To znaczy ze jesli pacjent bedzie mial konto locked to nie moze sie umowic na wizyte u danego doktora etc..
-//    Teraz tylko admin bedzie mogl edytowac i usuwac konta po ID - ZROBIONE
-//    Zrób endpoint który umożliwi adminowi wyświetlenie listy swoich akcji - ZROBIONE
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
