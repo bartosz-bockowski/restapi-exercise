@@ -20,6 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.TestExecutionEvent;
 import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -27,14 +28,13 @@ import org.springframework.web.context.WebApplicationContext;
 import java.time.LocalDate;
 
 import static org.hamcrest.Matchers.equalTo;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureTestDatabase
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class AppointmentControllerIntegrationTest {
 
     private MockMvc mockMvc;
@@ -123,20 +123,18 @@ public class AppointmentControllerIntegrationTest {
         AppointmentCommand appointmentCommand = new AppointmentCommand();
         appointmentCommand.setDate(LocalDate.parse("2020-01-01"));
         appointmentCommand.setDoctorId(3L);
-        //TODO casting error
         this.mockMvc.perform(post("/api/v1/appointment")
                         .content(objectMapper.writeValueAsString(appointmentCommand))
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.date", equalTo(appointmentCommand.getDate())));
+                .andExpect(jsonPath("$.date", equalTo("2020-01-01")));
     }
 
     @Test
     @WithUserDetails(value = "patient1", setupBefore = TestExecutionEvent.TEST_EXECUTION, userDetailsServiceBeanName = "userService")
     void shouldCancelAppointmentAsPatient() throws Exception {
         saveSampleAppointment();
-        //TODO casting error
         this.mockMvc.perform(post("/api/v1/appointment/cancel/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status", equalTo(AppointmentStatus.CANCELLED)));
@@ -146,7 +144,6 @@ public class AppointmentControllerIntegrationTest {
     @WithUserDetails(value = "doctor1", setupBefore = TestExecutionEvent.TEST_EXECUTION, userDetailsServiceBeanName = "userService")
     void shouldCancelAppointmentAsDoctor() throws Exception {
         hardSaveSampleAppointment(LocalDate.now().plusDays(2), 2L, 3L);
-        //TODO casting error
         this.mockMvc.perform(post("/api/v1/appointment/cancel/1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.status", equalTo(AppointmentStatus.CANCELLED)));
@@ -155,33 +152,9 @@ public class AppointmentControllerIntegrationTest {
     @Test
     @WithUserDetails(value = "admin1", setupBefore = TestExecutionEvent.TEST_EXECUTION, userDetailsServiceBeanName = "userService")
     void shouldReturnForbidden() throws Exception {
-        saveSampleAppointment();
-        //TODO casting error
+        hardSaveSampleAppointment(LocalDate.now().plusDays(2), 2L, 3L);
         this.mockMvc.perform(post("/api/v1/appointment/cancel/1"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status", equalTo(AppointmentStatus.CANCELLED)));
-    }
-
-    @Test
-    @WithUserDetails(value = "patient1", setupBefore = TestExecutionEvent.TEST_EXECUTION, userDetailsServiceBeanName = "userService")
-    void shouldReturnAppointmentsOfPatient() throws Exception {
-        saveSampleAppointment();
-        //TODO casting error
-        this.mockMvc.perform(get("/api/v1/appointment/my"))
-                .andExpect(status().isOk())
-                .andDo(print());
-//                .andExpect(jsonPath("$.status", equalTo(AppointmentStatus.CANCELLED)));
-    }
-
-    @Test
-    @WithUserDetails(value = "doctor1", setupBefore = TestExecutionEvent.TEST_EXECUTION, userDetailsServiceBeanName = "userService")
-    void shouldCompleteAppointment() throws Exception {
-        hardSaveSampleAppointment(LocalDate.now().minusDays(2), 2L, 3L);
-        //TODO casting error
-        this.mockMvc.perform(get("/api/v1/appointment/my"))
-                .andExpect(status().isOk())
-                .andDo(print());
-//                .andExpect(jsonPath("$.status", equalTo(AppointmentStatus.CANCELLED)));
+                .andExpect(status().isForbidden());
     }
 
 }

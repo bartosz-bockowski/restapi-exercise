@@ -57,14 +57,6 @@ public class AppointmentService {
         return appointmentRepository.save(appointment);
     }
 
-    public List<Appointment> getAppointmentsByPatientId(Long patientId) {
-        return appointmentRepository.getAppointmentsByPatientId(patientId);
-    }
-
-    public List<Appointment> getAppointmentsByDoctorId(Long doctorId) {
-        return appointmentRepository.getAppointmentsByDoctorId(doctorId);
-    }
-
     public Class getDTOforLoggedUser() {
         String userType = userService.getLoggedUser().getUserType();
         return switch (userType) {

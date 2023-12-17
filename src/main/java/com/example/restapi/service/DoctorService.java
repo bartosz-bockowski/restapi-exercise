@@ -8,7 +8,6 @@ import com.example.restapi.repository.DoctorRepository;
 import com.example.restapi.security.user.UserRepository;
 import com.example.restapi.security.user.UserService;
 import lombok.RequiredArgsConstructor;
-import org.modelmapper.ModelMapper;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -27,8 +26,6 @@ public class DoctorService {
     private final UserService userService;
 
     private final AdminActionService adminActionService;
-
-    private final ModelMapper modelMapper;
 
     public Doctor save(Doctor doctor) {
         userService.checkIfUserExistsByPeselAndUsername(doctor.getPesel(), doctor.getUsername());
@@ -57,7 +54,7 @@ public class DoctorService {
     }
 
     public List<Appointment> getAppointmentsOfLoggedDoctor() {
-        return Doctor.class.cast(userService.getLoggedUser()).getAppointments();
+        return ((Doctor) userService.getLoggedUser()).getAppointments();
     }
 
 }

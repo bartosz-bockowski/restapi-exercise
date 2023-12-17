@@ -11,7 +11,11 @@ import java.time.LocalDate;
 @Getter
 @Setter
 public class PatientAppointmentDTO {
+
     private LocalDate date;
+
     private DoctorDTO doctorDTO;
+
     private AppointmentStatus status;
+    
 }

@@ -12,7 +12,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Getter  //czemu nie uzywamy data w encji
+@Getter
 @Setter
 @ToString
 @AllArgsConstructor

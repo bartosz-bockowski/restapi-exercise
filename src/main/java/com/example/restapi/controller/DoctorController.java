@@ -8,6 +8,7 @@ import com.example.restapi.dto.DoctorDTO;
 import com.example.restapi.service.DoctorService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -53,6 +54,7 @@ public class DoctorController {
 
     @GetMapping("/myAppointments")
     public ResponseEntity<List<DoctorAppointmentDTO>> myAppointments() {
+        modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
         return new ResponseEntity<>(doctorService.getAppointmentsOfLoggedDoctor().stream()
                 .map(appointment -> modelMapper.map(appointment, DoctorAppointmentDTO.class))
                 .toList(), HttpStatus.OK);

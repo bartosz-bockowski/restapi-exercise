@@ -4,7 +4,6 @@ import com.example.restapi.command.AdminCommand;
 import com.example.restapi.domain.Admin;
 import com.example.restapi.domain.Doctor;
 import com.example.restapi.model.DoctorSpecializationType;
-import com.example.restapi.model.UserStatus;
 import com.example.restapi.service.AdminService;
 import com.example.restapi.service.DoctorService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -16,6 +15,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.TestExecutionEvent;
 import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -24,11 +24,13 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureTestDatabase
+@DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
 public class AdminControllerIntegrationTest {
 
     private MockMvc mockMvc;
@@ -99,17 +101,16 @@ public class AdminControllerIntegrationTest {
     @Test
     @WithUserDetails(value = "admin", setupBefore = TestExecutionEvent.TEST_EXECUTION, userDetailsServiceBeanName = "userService")
     void shouldChangeUserStatus() throws Exception {
-        //TODO casting error
         this.mockMvc.perform(post("/api/v1/admin/changeStatus/2"))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.userStatus", equalTo(UserStatus.LOCKED)));
+                .andDo(print())
+                .andExpect(jsonPath("$.userStatus", equalTo("LOCKED")));
     }
 
     @Test
     @WithUserDetails(value = "admin", setupBefore = TestExecutionEvent.TEST_EXECUTION, userDetailsServiceBeanName = "userService")
     void shouldSwitchLocked() throws Exception {
-        //TODO casting error
-        this.mockMvc.perform(post("/api/v1/admin/switchLocked/2"))
+        this.mockMvc.perform(post("/api/v1/admin/switchLockedUser/2"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.locked", equalTo(true)));
     }

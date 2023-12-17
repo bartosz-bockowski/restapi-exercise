@@ -1,7 +1,7 @@
 package com.example.restapi.config;
 
 import com.example.restapi.security.config.SpringSecurityAuditorAware;
-import com.example.restapi.security.user.UserService;
+import com.example.restapi.security.config.UserServiceTest;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.Converter;
 import org.modelmapper.ModelMapper;
@@ -16,7 +16,7 @@ import java.util.Set;
 @RequiredArgsConstructor
 public class Config {
 
-    private final UserService userService;
+    private final UserServiceTest userServiceTest;
 
     @Bean
     public ModelMapper modelMapper(Set<Converter> converterSet) {
@@ -28,7 +28,7 @@ public class Config {
 
     @Bean
     public SpringSecurityAuditorAware auditorProvider() {
-        return new SpringSecurityAuditorAware();
+        return new SpringSecurityAuditorAware(userServiceTest);
     }
 
 }

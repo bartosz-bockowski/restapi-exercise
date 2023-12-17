@@ -11,7 +11,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -19,18 +22,7 @@ public class UserService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
-    public User saveUser(User user) {
-        return userRepository.save(user);
-    }
-
-    public List<String> getAllUsernames() {
-        return userRepository.findAll().stream()
-                .map(User::getUsername)
-                .toList();
-    }
-
     public User getLoggedUser() {
-        String name = SecurityContextHolder.getContext().getAuthentication().getName();
         User user = findByUserName(SecurityContextHolder.getContext().getAuthentication().getName());
         if (Objects.isNull(user)) {
             throw new UserNotFoundException("User not found");

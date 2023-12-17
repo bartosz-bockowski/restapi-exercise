@@ -55,6 +55,7 @@ public class AdminService {
     public User switchLockedById(Long userId) {
         User user = userService.findById(userId);
         user.setLocked(!user.isLocked());
+        adminActionService.createAndSaveAction(user.isLocked() ? AdminActionType.LOCK_USER : AdminActionType.ENABLE_USER);
         return userService.updateUser(user);
     }
 

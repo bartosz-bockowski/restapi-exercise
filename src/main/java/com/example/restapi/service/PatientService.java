@@ -47,12 +47,16 @@ public class PatientService {
 
     public void deleteById(Long id) {
         userService.deleteCheck(id);
+
+        if (userService.isAdmin()) {
+            adminActionService.createAndSaveAction(AdminActionType.DELETE_DOCTOR);
+        }
+
         patientRepository.delete(patientRepository.findById(id)
                 .orElseThrow(() -> new PatientNotFoundException("Patient cannot be found!")));
-        adminActionService.createAndSaveAction(AdminActionType.DELETE_DOCTOR);
     }
 
     public List<Appointment> getAppointmentsOfLoggedPatient() {
-        return Patient.class.cast(userService.getLoggedUser()).getAppointments();
+        return ((Patient) userService.getLoggedUser()).getAppointments();
     }
 }

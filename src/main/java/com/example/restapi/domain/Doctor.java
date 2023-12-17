@@ -19,7 +19,7 @@ public class Doctor extends User {
 
     private DoctorSpecializationType specialization;
 
-    @OneToMany(mappedBy = "doctor")
+    @OneToMany
     private List<Appointment> appointments;
 
 }
