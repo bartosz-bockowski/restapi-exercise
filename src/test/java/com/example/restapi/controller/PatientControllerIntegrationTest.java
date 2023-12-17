@@ -44,15 +44,12 @@ public class PatientControllerIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    long nextPesel = 10000000000L;
-    long nextUsername = 100000L;
-
     @BeforeEach
     void setUp() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext)
                 .build();
-        patientService.save(createNextPatient());
-        patientService.save(createNextPatient());
+        patientService.save(createNextPatient("patientUsername1", "patientPes1"));
+        patientService.save(createNextPatient("patientUsername2", "patientPes2"));
         Admin admin = new Admin();
         admin.setUsername("admin1");
         admin.setPassword("123");
@@ -63,27 +60,18 @@ public class PatientControllerIntegrationTest {
         adminService.save(admin);
     }
 
-    String getNextPesel() {
-        return String.valueOf(nextPesel++);
-    }
-
-    String getNextUsername() {
-        return String.valueOf(nextUsername++);
-    }
-
-    public Patient createNextPatient() {
+    public Patient createNextPatient(String username, String pesel) {
         Patient patient = new Patient();
-        patient.setUsername(getNextUsername());
+        patient.setUsername(username);
         patient.setPassword("123");
         patient.setName("name");
         patient.setSurname("surname");
         patient.setAge(1);
-        patient.setPesel(getNextPesel());
+        patient.setPesel(pesel);
         return patient;
     }
 
     @Test
-    @WithUserDetails(value = "100000", setupBefore = TestExecutionEvent.TEST_EXECUTION, userDetailsServiceBeanName = "userService")
     void shouldGetAllPatients() throws Exception {
         this.mockMvc.perform(get("/api/v1/patient/all")
                         .accept(MediaType.APPLICATION_JSON))
@@ -92,12 +80,11 @@ public class PatientControllerIntegrationTest {
     }
 
     @Test
-    @WithUserDetails(value = "100000", setupBefore = TestExecutionEvent.TEST_EXECUTION, userDetailsServiceBeanName = "userService")
     void shouldPostPatient() throws Exception {
         PatientCommand patientCommand = new PatientCommand();
-        patientCommand.setUsername(getNextUsername());
+        patientCommand.setUsername("patientUsername3");
         patientCommand.setPassword("pass");
-        patientCommand.setPesel(getNextPesel());
+        patientCommand.setPesel("patientPes3");
         patientCommand.setName("nnn");
         patientCommand.setSurname("sss");
         patientCommand.setAge(1);
@@ -111,8 +98,7 @@ public class PatientControllerIntegrationTest {
     }
 
     @Test
-    @WithUserDetails(value = "100000", setupBefore = TestExecutionEvent.TEST_EXECUTION, userDetailsServiceBeanName = "userService")
-    void shouldGetDoctor() throws Exception {
+    void shouldGetPatient() throws Exception {
         this.mockMvc.perform(get("/api/v1/patient/1")
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
@@ -121,7 +107,7 @@ public class PatientControllerIntegrationTest {
 
     @Test
     @WithUserDetails(value = "100000", setupBefore = TestExecutionEvent.TEST_EXECUTION, userDetailsServiceBeanName = "userService")
-    void shouldDeletePatientAsDoctor() throws Exception {
+    void shouldDeletePatientAsPatient() throws Exception {
         this.mockMvc.perform(delete("/api/v1/patient/1"))
                 .andExpect(status().isOk());
 

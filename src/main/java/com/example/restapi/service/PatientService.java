@@ -1,9 +1,11 @@
 package com.example.restapi.service;
 
+import com.example.restapi.domain.Appointment;
 import com.example.restapi.domain.Patient;
 import com.example.restapi.exception.PatientNotFoundException;
 import com.example.restapi.model.AdminActionType;
 import com.example.restapi.repository.PatientRepository;
+import com.example.restapi.security.user.UserRepository;
 import com.example.restapi.security.user.UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -21,15 +23,17 @@ public class PatientService {
 
     private final UserService userService;
 
+    private final UserRepository userRepository;
+
     private final AdminActionService adminActionService;
 
     public Patient save(Patient patient) {
         patient.setPassword(bCryptPasswordEncoder.encode(patient.getPassword()));
-        return patientRepository.save(patient);
+        return userRepository.save(patient);
     }
 
     public Patient update(Patient patient) {
-        return patientRepository.save(patient);
+        return userRepository.save(patient);
     }
 
     public Patient findById(Long id) {
@@ -46,5 +50,9 @@ public class PatientService {
         patientRepository.delete(patientRepository.findById(id)
                 .orElseThrow(() -> new PatientNotFoundException("Patient cannot be found!")));
         adminActionService.createAndSaveAction(AdminActionType.DELETE_DOCTOR);
+    }
+
+    public List<Appointment> getAppointmentsOfLoggedPatient() {
+        return Patient.class.cast(userService.getLoggedUser()).getAppointments();
     }
 }

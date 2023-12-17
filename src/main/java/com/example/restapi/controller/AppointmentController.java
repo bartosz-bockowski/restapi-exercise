@@ -11,7 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/v1/appointment")
@@ -32,11 +31,6 @@ public class AppointmentController {
     @PostMapping("/cancel/{appointmentId}")
     public ResponseEntity<?> cancel(@PathVariable Long appointmentId) {
         return new ResponseEntity<>(modelMapper.map(appointmentService.cancelById(appointmentId), appointmentService.getDTOforLoggedUser()), HttpStatus.OK);
-    }
-
-    @GetMapping("/my")
-    public ResponseEntity<List<?>> my() {
-        return new ResponseEntity<>(appointmentService.getAppointmentsOfLoggedUser(), HttpStatus.OK);
     }
 
     @PostMapping("/complete/{appointmentId}/{healthId}")

@@ -21,5 +21,5 @@ public class UserController {
     public ResponseEntity<String> jwtToken(@RequestBody AuthenticationRequest userInput) {
         return new ResponseEntity<>(authenticationService.generateTokenFromUserInput(userInput), HttpStatus.OK);
     }
-
+    
 }

@@ -3,6 +3,7 @@ package com.example.restapi.controller;
 
 import com.example.restapi.command.DoctorCommand;
 import com.example.restapi.domain.Doctor;
+import com.example.restapi.dto.DoctorAppointmentDTO;
 import com.example.restapi.dto.DoctorDTO;
 import com.example.restapi.service.DoctorService;
 import lombok.RequiredArgsConstructor;
@@ -49,4 +50,12 @@ public class DoctorController {
         doctorService.deleteById(id);
         return HttpStatus.OK;
     }
+
+    @GetMapping("/myAppointments")
+    public ResponseEntity<List<DoctorAppointmentDTO>> myAppointments() {
+        return new ResponseEntity<>(doctorService.getAppointmentsOfLoggedDoctor().stream()
+                .map(appointment -> modelMapper.map(appointment, DoctorAppointmentDTO.class))
+                .toList(), HttpStatus.OK);
+    }
+
 }

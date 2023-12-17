@@ -3,7 +3,10 @@ package com.example.restapi.domain;
 import com.example.restapi.model.DoctorSpecializationType;
 import lombok.*;
 
+import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import javax.persistence.OneToMany;
+import java.util.List;
 
 @Entity
 @Getter
@@ -11,8 +14,12 @@ import javax.persistence.Entity;
 @ToString
 @AllArgsConstructor
 @NoArgsConstructor
+@DiscriminatorValue("Doctor")
 public class Doctor extends User {
 
     private DoctorSpecializationType specialization;
+
+    @OneToMany(mappedBy = "doctor")
+    private List<Appointment> appointments;
 
 }

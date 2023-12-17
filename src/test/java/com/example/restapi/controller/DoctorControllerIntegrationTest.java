@@ -47,15 +47,13 @@ class DoctorControllerIntegrationTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    long nextPesel = 10000000000L;
-    long nextUsername = 100000L;
-
     @BeforeEach
     void setUp() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext)
                 .build();
-        doctorService.save(createNextDoctor());
-        doctorService.save(createNextDoctor());
+        doctorService.save(createNextDoctor("doctorUsername1", "doctorPese1"));
+        doctorService.save(createNextDoctor("doctorUsername2", "doctorPese2"));
+
         Admin admin = new Admin();
         admin.setUsername("admin1");
         admin.setPassword("123");
@@ -64,30 +62,22 @@ class DoctorControllerIntegrationTest {
         admin.setSurname("surname");
         admin.setPesel("adminXadmin");
         adminService.save(admin);
+
     }
 
-    String getNextPesel() {
-        return String.valueOf(nextPesel++);
-    }
-
-    String getNextUsername() {
-        return String.valueOf(nextUsername++);
-    }
-
-    public Doctor createNextDoctor() {
+    public Doctor createNextDoctor(String username, String pesel) {
         Doctor doctor = new Doctor();
-        doctor.setUsername(getNextUsername());
+        doctor.setUsername(username);
         doctor.setPassword("123");
         doctor.setName("name");
         doctor.setSurname("surname");
         doctor.setAge(1);
-        doctor.setPesel(getNextPesel());
+        doctor.setPesel(pesel);
         doctor.setSpecialization(DoctorSpecializationType.SPEC1);
         return doctor;
     }
 
     @Test
-    @WithUserDetails(value = "100000", setupBefore = TestExecutionEvent.TEST_EXECUTION, userDetailsServiceBeanName = "userService")
     void shouldGetAllDoctors() throws Exception {
         this.mockMvc.perform(get("/api/v1/doctor/all")
                         .accept(MediaType.APPLICATION_JSON))
@@ -96,12 +86,11 @@ class DoctorControllerIntegrationTest {
     }
 
     @Test
-    @WithUserDetails(value = "100000", setupBefore = TestExecutionEvent.TEST_EXECUTION, userDetailsServiceBeanName = "userService")
     void shouldPostDoctor() throws Exception {
         DoctorCommand doctorCommand = new DoctorCommand();
-        doctorCommand.setUsername(getNextUsername());
+        doctorCommand.setUsername("doctorUsername3");
         doctorCommand.setPassword("pass");
-        doctorCommand.setPesel(getNextPesel());
+        doctorCommand.setPesel("doctorPese3");
         doctorCommand.setName("nnn");
         doctorCommand.setSurname("sss");
         doctorCommand.setAge(1);
@@ -116,7 +105,6 @@ class DoctorControllerIntegrationTest {
     }
 
     @Test
-    @WithUserDetails(value = "100000", setupBefore = TestExecutionEvent.TEST_EXECUTION, userDetailsServiceBeanName = "userService")
     void shouldGetDoctor() throws Exception {
         this.mockMvc.perform(get("/api/v1/doctor/1")
                         .accept(MediaType.APPLICATION_JSON))

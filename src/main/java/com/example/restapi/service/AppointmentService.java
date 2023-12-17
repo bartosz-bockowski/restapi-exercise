@@ -4,13 +4,11 @@ import com.example.restapi.command.AppointmentCommand;
 import com.example.restapi.domain.Appointment;
 import com.example.restapi.domain.Doctor;
 import com.example.restapi.domain.Patient;
-import com.example.restapi.domain.User;
 import com.example.restapi.dto.DoctorAppointmentDTO;
 import com.example.restapi.dto.PatientAppointmentDTO;
 import com.example.restapi.exception.AccessDeniedException;
 import com.example.restapi.exception.AppointmentCompletionTooEarlyException;
 import com.example.restapi.exception.AppointmentNotFoundException;
-import com.example.restapi.exception.UserNotFoundException;
 import com.example.restapi.model.AppointmentStatus;
 import com.example.restapi.model.PatientHealthStatus;
 import com.example.restapi.repository.AppointmentRepository;
@@ -112,15 +110,4 @@ public class AppointmentService {
         return appointmentRepository.save(appointment);
     }
 
-    public List<?> getAppointmentsOfLoggedUser() {
-        User user = userService.getLoggedUser();
-        Long userId = user.getId();
-        return switch (user.getUserType()) {
-            case "Patient" -> getAppointmentsByPatientId(userId).stream()
-                    .map(appointment -> modelMapper.map(appointment, PatientAppointmentDTO.class)).toList();
-            case "Doctor" -> getAppointmentsByDoctorId(userId).stream()
-                    .map(appointment -> modelMapper.map(appointment, DoctorAppointmentDTO.class)).toList();
-            default -> throw new UserNotFoundException("You are not applicable for appointments!");
-        };
-    }
 }

@@ -2,6 +2,7 @@ package com.example.restapi.controller;
 
 import com.example.restapi.command.PatientCommand;
 import com.example.restapi.domain.Patient;
+import com.example.restapi.dto.PatientAppointmentDTO;
 import com.example.restapi.dto.PatientDTO;
 import com.example.restapi.service.PatientService;
 import lombok.RequiredArgsConstructor;
@@ -47,4 +48,12 @@ public class PatientController {
         patientService.deleteById(id);
         return new ResponseEntity<>(null, HttpStatus.OK);
     }
+
+    @GetMapping("/myAppointments")
+    public ResponseEntity<List<PatientAppointmentDTO>> myAppointments() {
+        return new ResponseEntity<>(patientService.getAppointmentsOfLoggedPatient().stream()
+                .map(appointment -> modelMapper.map(appointment, PatientAppointmentDTO.class))
+                .toList(), HttpStatus.OK);
+    }
+
 }
