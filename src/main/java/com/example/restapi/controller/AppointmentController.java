@@ -26,7 +26,7 @@ public class AppointmentController {
     public ResponseEntity<PatientAppointmentDTO> save(@Valid @RequestBody AppointmentCommand appointmentCommand) {
         return new ResponseEntity<>(modelMapper.map(
                 appointmentService.save(appointmentCommand), PatientAppointmentDTO.class
-        ), HttpStatus.OK);
+        ), HttpStatus.CREATED);
     }
 
     @PostMapping("/cancel/{appointmentId}")

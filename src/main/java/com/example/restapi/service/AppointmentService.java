@@ -55,6 +55,10 @@ public class AppointmentService {
         return appointment;
     }
 
+    public Appointment hardSave(Appointment appointment) {
+        return appointmentRepository.save(appointment);
+    }
+
     public List<Appointment> getAppointmentsByPatientId(Long patientId) {
         return appointmentRepository.getAppointmentsByPatientId(patientId);
     }

@@ -4,6 +4,7 @@ import com.example.restapi.exception.*;
 import com.example.restapi.model.ApiError;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -42,7 +43,8 @@ public class GlobalExceptionHandler {
 
     //access denied
     @ExceptionHandler({
-            AccessDeniedException.class
+            AccessDeniedException.class,
+            BadCredentialsException.class
     })
     public ResponseEntity<ApiError> handleAccessDeniedException(RuntimeException exception) {
         ApiError apiError = new ApiError(HttpStatus.BAD_REQUEST, exception.getMessage());

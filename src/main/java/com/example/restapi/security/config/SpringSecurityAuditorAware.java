@@ -9,7 +9,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import java.util.Optional;
 
 public class SpringSecurityAuditorAware implements AuditorAware<Object> {
-
+    
     @Override
     public Optional<Object> getCurrentAuditor() {
         return Optional.ofNullable(SecurityContextHolder.getContext())

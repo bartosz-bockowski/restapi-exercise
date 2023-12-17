@@ -136,6 +136,7 @@ class DoctorControllerIntegrationTest {
     @Test
     @WithUserDetails(value = "admin1", setupBefore = TestExecutionEvent.TEST_EXECUTION, userDetailsServiceBeanName = "userService")
     void shouldDeleteDoctorAsAdmin() throws Exception {
+        //TODO casting error
         this.mockMvc.perform(delete("/api/v1/doctor/1"))
                 .andExpect(status().isOk());
 
