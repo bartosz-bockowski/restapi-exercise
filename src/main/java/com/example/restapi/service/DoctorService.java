@@ -4,10 +4,12 @@ import com.example.restapi.domain.Appointment;
 import com.example.restapi.domain.Doctor;
 import com.example.restapi.exception.DoctorNotFoundException;
 import com.example.restapi.model.AdminActionType;
+import com.example.restapi.model.ListUtils;
 import com.example.restapi.repository.DoctorRepository;
 import com.example.restapi.security.user.UserRepository;
 import com.example.restapi.security.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -53,8 +55,8 @@ public class DoctorService {
                 .orElseThrow(() -> new DoctorNotFoundException("Doctor cannot be found!")));
     }
 
-    public List<Appointment> getAppointmentsOfLoggedDoctor() {
-        return ((Doctor) userService.getLoggedUser()).getAppointments();
+    public List<Appointment> getAppointmentsOfLoggedDoctor(Pageable pageable) {
+        return ListUtils.getListPartFromPageable(((Doctor) userService.getLoggedUser()).getAppointments(), pageable);
     }
 
 }
