@@ -18,7 +18,7 @@ public class Patient extends User {
     @Enumerated(EnumType.STRING)
     private PatientHealthStatus health;
 
-    @OneToMany
+    @OneToMany(mappedBy = "patient")
     private List<Appointment> appointments;
 
 }

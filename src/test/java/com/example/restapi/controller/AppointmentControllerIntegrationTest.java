@@ -1,10 +1,7 @@
 package com.example.restapi.controller;
 
 import com.example.restapi.command.AppointmentCommand;
-import com.example.restapi.domain.Admin;
-import com.example.restapi.domain.Appointment;
-import com.example.restapi.domain.Doctor;
-import com.example.restapi.domain.Patient;
+import com.example.restapi.domain.*;
 import com.example.restapi.model.AppointmentStatus;
 import com.example.restapi.model.DoctorSpecializationType;
 import com.example.restapi.service.AdminService;
@@ -18,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.test.context.support.TestExecutionEvent;
 import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.annotation.DirtiesContext;
@@ -28,6 +26,7 @@ import org.springframework.web.context.WebApplicationContext;
 import java.time.LocalDate;
 
 import static org.hamcrest.Matchers.equalTo;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -60,6 +59,7 @@ public class AppointmentControllerIntegrationTest {
     @BeforeEach
     void setUp() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext)
+                .apply(springSecurity())
                 .build();
 
         Admin admin = new Admin();
@@ -120,6 +120,8 @@ public class AppointmentControllerIntegrationTest {
     @Test
     @WithUserDetails(value = "patient1", setupBefore = TestExecutionEvent.TEST_EXECUTION, userDetailsServiceBeanName = "userService")
     void shouldPostAppointment() throws Exception {
+        System.out.println("xxx123");
+        System.out.println(SecurityContextHolder.getContext().getAuthentication().getPrincipal() instanceof User);
         AppointmentCommand appointmentCommand = new AppointmentCommand();
         appointmentCommand.setDate(LocalDate.parse("2020-01-01"));
         appointmentCommand.setDoctorId(3L);

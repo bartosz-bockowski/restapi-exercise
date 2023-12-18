@@ -30,9 +30,11 @@ public class Appointment {
     private LocalDateTime createdTime;
 
     @ManyToOne
+    @ToString.Exclude
     private Patient patient;
 
     @ManyToOne
+    @ToString.Exclude
     private Doctor doctor;
 
     @NotNull
@@ -41,6 +43,7 @@ public class Appointment {
 
     @LastModifiedBy
     @ManyToOne
+    @ToString.Exclude
     private User lastChangedBy;
 
     @Version
