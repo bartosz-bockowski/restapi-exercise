@@ -9,6 +9,8 @@ import com.example.restapi.service.AdminService;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.SortDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,9 +35,9 @@ public class AdminController {
     }
 
     @GetMapping("/actions")
-    public ResponseEntity<List<AdminActionDTO>> getAdminActions() {
+    public ResponseEntity<List<AdminActionDTO>> getAdminActions(@SortDefault("id") Pageable pageable) {
         modelMapper.getConfiguration().setMatchingStrategy(MatchingStrategies.LOOSE);
-        return new ResponseEntity<>(adminService.getAdminActionsOfLoggedAdmin().stream()
+        return new ResponseEntity<>(adminService.getAdminActionsOfLoggedAdmin(pageable).stream()
                 .map(action -> modelMapper.map(action, AdminActionDTO.class)).toList(), HttpStatus.OK);
     }
 

@@ -7,10 +7,12 @@ import com.example.restapi.domain.User;
 import com.example.restapi.exception.AccessDeniedException;
 import com.example.restapi.exception.UserNotFoundException;
 import com.example.restapi.model.AdminActionType;
+import com.example.restapi.model.ListUtils;
 import com.example.restapi.model.UserStatus;
 import com.example.restapi.repository.AdminRepository;
 import com.example.restapi.security.user.UserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -34,14 +36,14 @@ public class AdminService {
         return adminRepository.save(admin);
     }
 
-    public List<AdminAction> getAdminActionsOfLoggedAdmin() {
+    public List<AdminAction> getAdminActionsOfLoggedAdmin(Pageable pageable) {
         User user = userService.getLoggedUser();
         if (!Objects.equals(user.getUserType(), "Admin")) {
             throw new AccessDeniedException("You're not an admin!");
         }
-        return adminRepository.findById(user.getId())
+        return ListUtils.getListPartFromPageable(adminRepository.findById(user.getId())
                 .orElseThrow(() -> new UserNotFoundException("User not found!"))
-                .getActions();
+                .getActions(), pageable);
     }
 
     public User changeUserStatusById(Long userId) {
